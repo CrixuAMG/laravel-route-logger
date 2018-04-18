@@ -2,6 +2,8 @@
 
 namespace CrixuAMG\RouteLogger\Models;
 
+use Illuminate\Database\Eloquent\Model;
+
 class RequestLog extends Model
 {
     /**
