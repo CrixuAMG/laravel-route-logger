@@ -1,0 +1,28 @@
+{
+    "name": "crixuamg/laravel-route-logger",
+    "description": "Automatically logs all requests with the request data",
+    "require": {
+        "php": ">=7.0",
+        "laravel/framework": "5.*"
+    },
+    "authors": [
+        {
+            "name": "Christian Kaal",
+            "email": "christiankaal@gmail.com"
+        }
+    ],
+    "prefer-stable": true,
+    "minimum-stability": "stable",
+    "autoload": {
+      "psr-4": {
+        "CrixuAMG\\RouteLogger\\": "src"
+      }
+    },
+    "extra": {
+      "laravel": {
+        "providers": [
+          "CrixuAMG\\RouteLogger\\ServiceProvider"
+        ]
+      }
+    }
+}
