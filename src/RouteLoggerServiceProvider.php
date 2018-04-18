@@ -29,7 +29,7 @@ class RouteLoggerServiceProvider extends ServiceProvider
     private function registerConfiguration()
     {
         $this->publishes([
-            __DIR__ . '/config/route-loggers.php' => config_path('route-loggers.php'),
+            __DIR__ . '/config/route-logger.php' => config_path('route-logger.php'),
         ]);
     }
 
