@@ -18,6 +18,9 @@ class RouteLoggerServiceProvider extends ServiceProvider
     {
         // Allow the user to get the config file
         $this->registerConfiguration();
+
+        // Allow the user to get the migrations
+        $this->registerMigrations();
     }
 
     /**
@@ -28,5 +31,13 @@ class RouteLoggerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/config/route-loggers.php' => config_path('route-loggers.php'),
         ]);
+    }
+
+    /**
+     * Register the migrations
+     */
+    private function registerMigrations()
+    {
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
 }
