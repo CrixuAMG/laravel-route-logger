@@ -19,8 +19,8 @@ class CreateRequestLogsTable extends Migration
             $table->string('name')->nullable();
             $table->string('uri')->default('/');
             $table->string('method')->default('GET');
-            $table->longString('parameters')->nullable();
-            $table->longString('query')->nullable();
+            $table->longText('parameters')->nullable();
+            $table->longText('query')->nullable();
             $table->string('ip')->nullable();
             $table->timestamps();
         });
