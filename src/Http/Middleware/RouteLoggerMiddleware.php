@@ -30,29 +30,23 @@ class RouteLoggerMiddleware
                 $data['user_id'] = $userId;
             }
 
-            if (!empty($data)) {
-                $recentlyCreated = RequestLog::where($data)
-                    ->where(
-                        'updated_at',
-                        '>',
-                        (new \DateTime())->modify(
-                            sprintf('-%u hours', config('route-logger.hours_between_records'))
-                        )->format('Y-m-d H:i:s')
-                    )
-                    ->first();
-
-                if ($recentlyCreated) {
-                    return $response;
-                }
-            }
-
-            $data['uri']        = $request->getPathInfo();
-            $data['name']       = $request->route()->getName();
-            $data['method']     = $request->getMethod();
-            $data['parameters'] = $request->request->all();
-            $data['query']      = $request->query();
-
-            RequestLog::create($data);
+            // Create the new log
+            RequestLog::create(
+                array_merge(
+                    $data,
+                    [
+                        // Build up the data
+                        'uri' => $request->getPathInfo(),
+                        'name' => $request->route()->getName(),
+                        'method' => $request->getMethod(),
+                        'query' => $request->query(),
+                        'parameters' => $request->request->except(
+                            // Get all fields that should never be saved to the database
+                            RequestLog::getIllegalFields()
+                        ),
+                    ]
+                )
+            );
         }
 
         return $response;
