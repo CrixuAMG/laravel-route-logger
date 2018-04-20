@@ -53,7 +53,7 @@ class RequestLog extends Model
     {
         // Merge the data in the illegal fields array above with the configurable array in the config file
         return array_merge(
-            config('route-logger.log_except'),
+            (array)config('route-logger.log_except'),
             self::$illegalFields
         );
     }
