@@ -26,6 +26,8 @@ class RequestLog extends Model
         'parameters',
         'query',
         'ip',
+        'query_count',
+        'response_time',
     ];
     /**
      * @var string
@@ -49,7 +51,7 @@ class RequestLog extends Model
     /**
      * @return array;
      */
-    public static function getIllegalFields() : array
+    public static function getIllegalFields(): array
     {
         // Merge the data in the illegal fields array above with the configurable array in the config file
         return array_merge(
