@@ -12,6 +12,11 @@ return [
     'track_ip'              => (bool)env('APP_LOG_IP', true),
 
     /**
+     * Whether the query count should be saved to the database or not
+     */
+    'track_query_count'              => (bool)env('APP_LOG_QUERY_COUNT', true),
+
+    /**
      * Data that should not be logged
      */
     'log_except'            => [],

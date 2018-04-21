@@ -3,9 +3,30 @@
 namespace CrixuAMG\RouteLogger\Http\Middleware;
 
 use CrixuAMG\RouteLogger\Models\RequestLog;
+use Illuminate\Support\Facades\DB;
 
+/**
+ * Class RouteLoggerMiddleware
+ *
+ * @package CrixuAMG\RouteLogger\Http\Middleware
+ */
 class RouteLoggerMiddleware
 {
+    /**
+     * @var
+     */
+    private $requestLog;
+
+    /**
+     * RouteLoggerMiddleware constructor.
+     */
+    public function __construct()
+    {
+        if (config('route-logger.track_query_count')) {
+            DB::enableQueryLog();
+        }
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -37,10 +58,10 @@ class RouteLoggerMiddleware
 
             $routeQueryData = $request->query();
             // Get all fields that are illegal to save to the database
-            $illegalFields  = RequestLog::getIllegalFields();
+            $illegalFields = RequestLog::getIllegalFields();
 
             // Create the new log
-            RequestLog::create(
+            $this->requestLog = RequestLog::create(
                 array_merge(
                     $data,
                     [
@@ -65,5 +86,24 @@ class RouteLoggerMiddleware
 
         // Return the response
         return $response;
+    }
+
+    /**
+     * @param $request
+     * @param $response
+     */
+    public function terminate($request, $response)
+    {
+        if (config('route-logger.log_requests') && $this->requestLog) {
+            $updateData = [];
+
+            if (config('route-logger.track_query_count')) {
+                $updateData['query_count'] = \count(DB::getQueryLog());
+            }
+
+            $updateData['response_time'] = microtime(true) - LARAVEL_START;
+
+            $this->requestLog->update($updateData);
+        }
     }
 }
