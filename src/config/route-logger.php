@@ -29,5 +29,5 @@ return [
     /**
      *
      */
-    'filter_fields' => [],
+    'filter_fields'     => [],
 ];

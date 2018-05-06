@@ -2,21 +2,8 @@
 
 namespace CrixuAMG\RouteLogger\Converters;
 
-use CrixuAMG\RouteLogger\Contracts\ConverterContract;
-
-class ClosureConverter implements ConverterContract
+class ClosureConverter extends AbstractConverter
 {
-    /**
-     * @param      $value
-     * @param null $rule
-     *
-     * @return mixed
-     */
-    public function test($value, $rule = null)
-    {
-        return $this->convert($value, $rule);
-    }
-
     /**
      * @param      $value
      * @param null $rule
@@ -27,5 +14,16 @@ class ClosureConverter implements ConverterContract
     {
         /** @var $rule \Closure */
         return $rule($value);
+    }
+
+    /**
+     * @param      $value
+     * @param null $rule
+     *
+     * @return bool
+     */
+    public function passes($value, $rule = null): bool
+    {
+        return $value instanceof \Closure;
     }
 }

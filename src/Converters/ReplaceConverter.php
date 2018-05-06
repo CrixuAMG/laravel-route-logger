@@ -2,14 +2,12 @@
 
 namespace CrixuAMG\RouteLogger\Converters;
 
-use CrixuAMG\RouteLogger\Contracts\ConverterContract;
-
 /**
  * Class ReplaceConverter
  *
  * @package CrixuAMG\RouteLogger\Converters
  */
-class ReplaceConverter implements ConverterContract
+class ReplaceConverter extends AbstractConverter
 {
     /**
      *
@@ -22,23 +20,19 @@ class ReplaceConverter implements ConverterContract
      *
      * @return mixed
      */
-    public function test($value, $rule = null)
+    public function convert($value, $rule = null)
     {
-        if (starts_with($value, static::STARTS_STRING)) {
-            return $this->convert($value);
-        }
-
-        return $value;
+        return str_after($value, static::STARTS_STRING);
     }
 
     /**
      * @param      $value
      * @param null $rule
      *
-     * @return mixed
+     * @return bool
      */
-    public function convert($value, $rule = null)
+    public function passes($value, $rule = null): bool
     {
-        return str_after($value, static::STARTS_STRING);
+        return starts_with($value, static::STARTS_STRING);
     }
 }
