@@ -5,8 +5,8 @@ namespace CrixuAMG\RouteLogger\Http\Middleware;
 use CrixuAMG\RouteLogger\Converters\ApproximateConverter;
 use CrixuAMG\RouteLogger\Converters\ClosureConverter;
 use CrixuAMG\RouteLogger\Converters\CountConverter;
-use CrixuAMG\RouteLogger\Converters\FirstXCharactersConverter;
-use CrixuAMG\RouteLogger\Converters\LastXCharactersConverter;
+use CrixuAMG\RouteLogger\Converters\FirstXConverter;
+use CrixuAMG\RouteLogger\Converters\LastXConverter;
 use CrixuAMG\RouteLogger\Converters\LoremConverter;
 use CrixuAMG\RouteLogger\Converters\ReplaceConverter;
 use CrixuAMG\RouteLogger\Models\RequestLog;
@@ -29,8 +29,8 @@ class RouteLoggerMiddleware
      */
     private $startsConverters = [
         ReplaceConverter::class,
-        FirstXCharactersConverter::class,
-        LastXCharactersConverter::class,
+        FirstXConverter::class,
+        LastXConverter::class,
     ];
 
     /**
@@ -94,7 +94,7 @@ class RouteLoggerMiddleware
 
             $data['response_time'] = round(microtime(true) - LARAVEL_START, 4);
 
-            $routeQueryData = $request->query();
+            $routeQueryData    = $request->query();
             $filteredQueryData = $this->filterData($routeQueryData);
 
             $filteredData = $this->filterData(
@@ -133,7 +133,7 @@ class RouteLoggerMiddleware
     {
         // Get all fields that are illegal to save to the database
         $illegalFields = array_flip(RequestLog::getIllegalFields());
-        $filterFields = (array)config('route-logger.filter_fields');
+        $filterFields  = (array)config('route-logger.filter_fields');
 
         foreach ($data as $name => $value) {
             $keyExists = array_key_exists($name, $filterFields);
@@ -145,7 +145,7 @@ class RouteLoggerMiddleware
 
             if ($keyExists) {
                 $valueToUse = $value;
-                $rules = $filterFields[$name];
+                $rules      = $filterFields[$name];
 
                 if (!is_array($rules)) {
                     $rules = explode('|', $rules);
@@ -156,19 +156,22 @@ class RouteLoggerMiddleware
                         foreach ($this->startsConverters as $converter) {
                             $converter = new $converter;
                             if (starts_with($rule, $converter::STARTS_STRING)) {
-                                $valueToUse = $converter->test($valueToUse, $rule);
+                                $valueToUse = $converter->convertIfPasses(
+                                    $valueToUse,
+                                    $rule
+                                );
                             }
                         }
 
                         foreach ($this->genericConverters as $converter) {
-                            $testedResult = (new $converter)->test($valueToUse, $rule);
+                            $testedResult = (new $converter)->convertIfPasses($valueToUse, $rule);
 
                             if ($testedResult !== $valueToUse) {
                                 $valueToUse .= $testedResult;
                             }
                         }
                     } else {
-                        $valueToUse = (new $this->closureConverter)->test($valueToUse, $rule);
+                        $valueToUse = (new $this->closureConverter)->convertIfPasses($valueToUse, $rule);
                     }
                 }
 

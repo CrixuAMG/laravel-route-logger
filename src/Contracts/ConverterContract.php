@@ -7,6 +7,11 @@ namespace CrixuAMG\RouteLogger\Contracts;
  *
  * @package CrixuAMG\RouteLogger\Contracts
  */
+/**
+ * Interface ConverterContract
+ *
+ * @package CrixuAMG\RouteLogger\Contracts
+ */
 interface ConverterContract
 {
     /**
@@ -15,7 +20,7 @@ interface ConverterContract
      *
      * @return mixed
      */
-    public function test($value, $rule = null);
+    public function convertIfPasses($value, $rule = null);
 
     /**
      * @param      $value
@@ -24,4 +29,12 @@ interface ConverterContract
      * @return mixed
      */
     public function convert($value, $rule = null);
+
+    /**
+     * @param      $value
+     * @param null $rule
+     *
+     * @return bool
+     */
+    public function passes($value, $rule = null): bool;
 }

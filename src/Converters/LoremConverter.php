@@ -2,7 +2,6 @@
 
 namespace CrixuAMG\RouteLogger\Converters;
 
-use CrixuAMG\RouteLogger\Contracts\ConverterContract;
 use Faker\Factory as Faker;
 
 /**
@@ -10,7 +9,7 @@ use Faker\Factory as Faker;
  *
  * @package CrixuAMG\RouteLogger\Converters
  */
-class LoremConverter implements ConverterContract
+class LoremConverter extends AbstractConverter
 {
     /**
      *
@@ -35,7 +34,7 @@ class LoremConverter implements ConverterContract
      *
      * @return mixed
      */
-    public function test($value, $rule = null)
+    public function convertIfPasses($value, $rule = null)
     {
         if ($rule === static::INDENTIFIER) {
             return $this->convert($value, $rule);
@@ -53,5 +52,16 @@ class LoremConverter implements ConverterContract
     public function convert($value, $rule = null)
     {
         dd($value, $rule, $this);
+    }
+
+    /**
+     * @param      $value
+     * @param null $rule
+     *
+     * @return bool
+     */
+    public function passes($value, $rule = null): bool
+    {
+        return $rule === static::INDENTIFIER;
     }
 }

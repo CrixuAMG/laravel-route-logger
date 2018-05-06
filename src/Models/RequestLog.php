@@ -7,46 +7,48 @@ use Illuminate\Database\Eloquent\Model;
 class RequestLog extends Model
 {
     /**
+     * The attributes that are illegal to save to the database.
+     *
      * @var array
      */
-    protected $casts = [
-        'parameters' => 'object',
-        'query'      => 'object',
-    ];
+    private static $illegalFields
+        = [
+            'client_id',
+            'client_secret',
+            'password',
+            'password_confirmation',
+            'new_password',
+            'new_password_confirmation',
+        ];
+    /**
+     * @var array
+     */
+    protected $casts
+        = [
+            'parameters' => 'object',
+            'query'      => 'object',
+        ];
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [
-        'user_id',
-        'name',
-        'uri',
-        'method',
-        'parameters',
-        'query',
-        'ip',
-        'query_count',
-        'response_time',
-    ];
+    protected $fillable
+        = [
+            'user_id',
+            'name',
+            'uri',
+            'method',
+            'parameters',
+            'query',
+            'ip',
+            'query_count',
+            'response_time',
+        ];
     /**
      * @var string
      */
     protected $table = 'request_logs';
-
-    /**
-     * The attributes that are illegal to save to the database.
-     *
-     * @var array
-     */
-    private static $illegalFields = [
-        'client_id',
-        'client_secret',
-        'password',
-        'password_confirmation',
-        'new_password',
-        'new_password_confirmation',
-    ];
 
     /**
      * @return array;

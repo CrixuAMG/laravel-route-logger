@@ -2,14 +2,12 @@
 
 namespace CrixuAMG\RouteLogger\Converters;
 
-use CrixuAMG\RouteLogger\Contracts\ConverterContract;
-
 /**
  * Class CountConverter
  *
  * @package CrixuAMG\RouteLogger\Converters
  */
-class CountConverter implements ConverterContract
+class CountConverter extends AbstractConverter
 {
     /**
      *
@@ -22,23 +20,19 @@ class CountConverter implements ConverterContract
      *
      * @return mixed
      */
-    public function test($value, $rule = null)
+    public function convert($value, $rule = null)
     {
-        if ($rule === static::INDENTIFIER) {
-            return $this->convert($value, $rule);
-        }
-
-        return $value;
+        return sprintf('|count: %u', strlen($value));
     }
 
     /**
      * @param      $value
      * @param null $rule
      *
-     * @return mixed
+     * @return bool
      */
-    public function convert($value, $rule = null)
+    public function passes($value, $rule = null): bool
     {
-        return sprintf('|count: %u', strlen($value));
+        return $rule === static::INDENTIFIER;
     }
 }
