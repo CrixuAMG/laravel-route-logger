@@ -94,7 +94,7 @@ class RouteLoggerMiddleware
 
             $data['response_time'] = round(microtime(true) - LARAVEL_START, 4);
 
-            $routeQueryData    = $request->query();
+            $routeQueryData = $request->query();
             $filteredQueryData = $this->filterData($routeQueryData);
 
             $filteredData = $this->filterData(
@@ -111,7 +111,7 @@ class RouteLoggerMiddleware
                     [
                         // Build up the data
                         'uri'        => $request->getPathInfo(),
-                        'name'       => $request->route()->getName(),
+                        'name'       => optional($request->route())->getName(),
                         'method'     => $request->getMethod(),
                         'query'      => $filteredQueryData,
                         'parameters' => $filteredData,
@@ -133,7 +133,7 @@ class RouteLoggerMiddleware
     {
         // Get all fields that are illegal to save to the database
         $illegalFields = array_flip(RequestLog::getIllegalFields());
-        $filterFields  = (array)config('route-logger.filter_fields');
+        $filterFields = (array)config('route-logger.filter_fields');
 
         foreach ($data as $name => $value) {
             $keyExists = array_key_exists($name, $filterFields);
@@ -144,35 +144,15 @@ class RouteLoggerMiddleware
             }
 
             if ($keyExists) {
-                $valueToUse = $value;
-                $rules      = $filterFields[$name];
+                $valueToUse = null;
+                $rules = $filterFields[$name];
 
                 if (!is_array($rules)) {
                     $rules = explode('|', $rules);
                 }
 
                 foreach ($rules as $rule) {
-                    if (!($rule instanceof \Closure)) {
-                        foreach ($this->startsConverters as $converter) {
-                            $converter = new $converter;
-                            if (starts_with($rule, $converter::STARTS_STRING)) {
-                                $valueToUse = $converter->convertIfPasses(
-                                    $valueToUse,
-                                    $rule
-                                );
-                            }
-                        }
-
-                        foreach ($this->genericConverters as $converter) {
-                            $testedResult = (new $converter)->convertIfPasses($valueToUse, $rule);
-
-                            if ($testedResult !== $valueToUse) {
-                                $valueToUse .= $testedResult;
-                            }
-                        }
-                    } else {
-                        $valueToUse = (new $this->closureConverter)->convertIfPasses($valueToUse, $rule);
-                    }
+                    $valueToUse = $this->useRule($rule, $value);
                 }
 
                 $data[$name] = $valueToUse;
@@ -180,5 +160,40 @@ class RouteLoggerMiddleware
         }
 
         return $data;
+    }
+
+    /**
+     * @param $rule
+     * @param $value
+     *
+     * @return string
+     */
+    private function useRule($rule, $value): string
+    {
+        $valueToUse = $value;
+
+        if (!($rule instanceof \Closure)) {
+            foreach ($this->startsConverters as $converter) {
+                $converter = new $converter;
+                if (starts_with($rule, $converter::STARTS_STRING)) {
+                    $valueToUse = $converter->convertIfPasses(
+                        $valueToUse,
+                        $rule
+                    );
+                }
+            }
+
+            foreach ($this->genericConverters as $converter) {
+                $testedResult = (new $converter)->convertIfPasses($valueToUse, $rule);
+
+                if ($testedResult !== $valueToUse) {
+                    $valueToUse .= $testedResult;
+                }
+            }
+        } else {
+            $valueToUse = (new $this->closureConverter)->convertIfPasses($valueToUse, $rule);
+        }
+
+        return $valueToUse;
     }
 }
