@@ -11,40 +11,37 @@ class RequestLog extends Model
      *
      * @var array
      */
-    private static $illegalFields
-        = [
-            'client_id',
-            'client_secret',
-            'password',
-            'password_confirmation',
-            'new_password',
-            'new_password_confirmation',
-        ];
+    private static $illegalFields = [
+        'client_id',
+        'client_secret',
+        'password',
+        'password_confirmation',
+    ];
     /**
      * @var array
      */
-    protected $casts
-        = [
-            'parameters' => 'object',
-            'query'      => 'object',
-        ];
+    protected $casts = [
+        'parameters' => 'object',
+        'query'      => 'object',
+        'extra_data'      => 'object',
+    ];
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable
-        = [
-            'user_id',
-            'name',
-            'uri',
-            'method',
-            'parameters',
-            'query',
-            'ip',
-            'query_count',
-            'response_time',
-        ];
+    protected $fillable = [
+        'user_id',
+        'name',
+        'uri',
+        'method',
+        'parameters',
+        'query',
+        'ip',
+        'query_count',
+        'response_time',
+        'extra_data',
+    ];
     /**
      * @var string
      */

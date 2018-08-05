@@ -24,6 +24,7 @@ class CreateRequestLogsTable extends Migration
             $table->string('ip')->nullable();
             $table->unsignedInteger('query_count')->nullable();
             $table->double('response_time')->nullable();
+            $table->longText('extra_data')->nullable();
             $table->timestamps();
         });
     }

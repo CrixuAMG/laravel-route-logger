@@ -7,11 +7,6 @@ namespace CrixuAMG\RouteLogger\Contracts;
  *
  * @package CrixuAMG\RouteLogger\Contracts
  */
-/**
- * Interface ConverterContract
- *
- * @package CrixuAMG\RouteLogger\Contracts
- */
 interface ConverterContract
 {
     /**

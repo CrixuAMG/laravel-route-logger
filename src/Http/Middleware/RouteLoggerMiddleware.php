@@ -7,7 +7,6 @@ use CrixuAMG\RouteLogger\Converters\ClosureConverter;
 use CrixuAMG\RouteLogger\Converters\CountConverter;
 use CrixuAMG\RouteLogger\Converters\FirstXConverter;
 use CrixuAMG\RouteLogger\Converters\LastXConverter;
-use CrixuAMG\RouteLogger\Converters\LoremConverter;
 use CrixuAMG\RouteLogger\Converters\ReplaceConverter;
 use CrixuAMG\RouteLogger\Models\RequestLog;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +41,6 @@ class RouteLoggerMiddleware
      * @var array
      */
     private $genericConverters = [
-        LoremConverter::class,
         CountConverter::class,
         ApproximateConverter::class,
     ];
@@ -90,6 +88,11 @@ class RouteLoggerMiddleware
 
             if (config('route-logger.track_query_count')) {
                 $data['query_count'] = \count(DB::getQueryLog());
+            }
+
+            $callback = config('route-logger.request_callback');
+            if ($callback instanceof \Closure) {
+                $data['extra_data'] = (array)($callback)($request);
             }
 
             $data['response_time'] = round(microtime(true) - LARAVEL_START, 4);
