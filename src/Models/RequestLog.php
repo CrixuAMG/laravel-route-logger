@@ -23,7 +23,7 @@ class RequestLog extends Model
     protected $casts = [
         'parameters' => 'object',
         'query'      => 'object',
-        'extra_data'      => 'object',
+        'extra_data' => 'object',
     ];
     /**
      * The attributes that are mass assignable.
@@ -40,6 +40,7 @@ class RequestLog extends Model
         'ip',
         'query_count',
         'response_time',
+        'response_code',
         'extra_data',
     ];
     /**

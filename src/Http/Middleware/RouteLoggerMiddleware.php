@@ -113,11 +113,12 @@ class RouteLoggerMiddleware
                     $data,
                     [
                         // Build up the data
-                        'uri'        => $request->getPathInfo(),
-                        'name'       => optional($request->route())->getName(),
-                        'method'     => $request->getMethod(),
-                        'query'      => $filteredQueryData,
-                        'parameters' => $filteredData,
+                        'uri'           => $request->getPathInfo(),
+                        'name'          => optional($request->route())->getName(),
+                        'method'        => $request->getMethod(),
+                        'query'         => $filteredQueryData,
+                        'parameters'    => $filteredData,
+                        'response_code' => $response->statusCode ?? null,
                     ]
                 )
             );
