@@ -118,7 +118,7 @@ class RouteLoggerMiddleware
                         'method'        => $request->getMethod(),
                         'query'         => $filteredQueryData,
                         'parameters'    => $filteredData,
-                        'response_code' => $response->statusCode ?? null,
+                        'response_code' => $response->getStatusCode() ?? null,
                     ]
                 )
             );
