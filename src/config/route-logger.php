@@ -30,4 +30,13 @@ return [
      *
      */
     'filter_fields'     => [],
+
+    /**
+     * When the value of this element is a callback, the request will be passed to it, and any extra data can be retrieved
+     * from it to increase the amount of valuable information in the database
+     */
+    'request_callback' => null,
+//    'request_callback' => function ($request) {
+//      //
+//    }
 ];

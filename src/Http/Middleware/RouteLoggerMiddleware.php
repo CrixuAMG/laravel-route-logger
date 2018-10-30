@@ -2,12 +2,12 @@
 
 namespace CrixuAMG\RouteLogger\Http\Middleware;
 
+use CrixuAMG\RouteLogger\Converters\AbstractConverter;
 use CrixuAMG\RouteLogger\Converters\ApproximateConverter;
 use CrixuAMG\RouteLogger\Converters\ClosureConverter;
 use CrixuAMG\RouteLogger\Converters\CountConverter;
 use CrixuAMG\RouteLogger\Converters\FirstXConverter;
 use CrixuAMG\RouteLogger\Converters\LastXConverter;
-use CrixuAMG\RouteLogger\Converters\LoremConverter;
 use CrixuAMG\RouteLogger\Converters\ReplaceConverter;
 use CrixuAMG\RouteLogger\Models\RequestLog;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +42,6 @@ class RouteLoggerMiddleware
      * @var array
      */
     private $genericConverters = [
-        LoremConverter::class,
         CountConverter::class,
         ApproximateConverter::class,
     ];
@@ -92,9 +91,18 @@ class RouteLoggerMiddleware
                 $data['query_count'] = \count(DB::getQueryLog());
             }
 
-            $data['response_time'] = round(microtime(true) - LARAVEL_START, 4);
+            $callback = config('route-logger.request_callback');
+            if ($callback instanceof \Closure) {
+                $data['extra_data'] = (array)$callback($request);
+            }
 
-            $routeQueryData = $request->query();
+            // When running PHPUNIT the LARAVEL_START constant won't be defined,
+            // so make sure to only use it if it is defined
+            if (\defined('LARAVEL_START')) {
+                $data['response_time'] = round(microtime(true) - LARAVEL_START, 4);
+            }
+
+            $routeQueryData    = $request->query();
             $filteredQueryData = $this->filterData($routeQueryData);
 
             $filteredData = $this->filterData(
@@ -110,11 +118,12 @@ class RouteLoggerMiddleware
                     $data,
                     [
                         // Build up the data
-                        'uri'        => $request->getPathInfo(),
-                        'name'       => optional($request->route())->getName(),
-                        'method'     => $request->getMethod(),
-                        'query'      => $filteredQueryData,
-                        'parameters' => $filteredData,
+                        'uri'           => $request->getPathInfo(),
+                        'name'          => optional($request->route())->getName(),
+                        'method'        => $request->getMethod(),
+                        'query'         => $filteredQueryData,
+                        'parameters'    => $filteredData,
+                        'response_code' => $response->getStatusCode() ?? null,
                     ]
                 )
             );
@@ -133,11 +142,11 @@ class RouteLoggerMiddleware
     {
         // Get all fields that are illegal to save to the database
         $illegalFields = array_flip(RequestLog::getIllegalFields());
-        $filterFields = (array)config('route-logger.filter_fields');
+        $filterFields  = (array)config('route-logger.filter_fields');
 
         foreach ($data as $name => $value) {
             $keyExists = array_key_exists($name, $filterFields);
-            if (isset($illegalFields[$name]) && !$keyExists) {
+            if (!$keyExists && isset($illegalFields[$name])) {
                 unset($data[$name]);
 
                 continue;
@@ -145,9 +154,9 @@ class RouteLoggerMiddleware
 
             if ($keyExists) {
                 $valueToUse = null;
-                $rules = $filterFields[$name];
+                $rules      = $filterFields[$name];
 
-                if (!is_array($rules)) {
+                if (!\is_array($rules)) {
                     $rules = explode('|', $rules);
                 }
 

@@ -26,7 +26,7 @@ class ApproximateConverter extends AbstractConverter
      */
     public function convert($value, $rule = null)
     {
-        $length     = strlen($value);
+        $length = strlen($value);
         $multiplier = $this->multiplier;
 
         return sprintf('|approximate: %u', random_int(
