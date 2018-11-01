@@ -2,7 +2,6 @@
 
 namespace CrixuAMG\RouteLogger\Http\Middleware;
 
-use CrixuAMG\RouteLogger\Converters\AbstractConverter;
 use CrixuAMG\RouteLogger\Converters\ApproximateConverter;
 use CrixuAMG\RouteLogger\Converters\ClosureConverter;
 use CrixuAMG\RouteLogger\Converters\CountConverter;
@@ -106,7 +105,7 @@ class RouteLoggerMiddleware
             $filteredQueryData = $this->filterData($routeQueryData);
 
             $filteredData = $this->filterData(
-                array_diff(
+                array_merge(
                     $request->request->all(),
                     $routeQueryData
                 )
