@@ -22,7 +22,7 @@ class CreateRequestLogsTable extends Migration
             $table->longText('parameters')->nullable();
             $table->longText('query')->nullable();
             $table->string('ip')->nullable();
-            $table->string('user-agent')->nullable();
+            $table->string('user_agent')->nullable();
             $table->unsignedInteger('query_count')->nullable();
             $table->unsignedInteger('response_code')->nullable();
             $table->double('response_time')->nullable();
