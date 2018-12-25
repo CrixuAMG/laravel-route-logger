@@ -38,6 +38,7 @@ class RequestLog extends Model
         'parameters',
         'query',
         'ip',
+        'user-agent',
         'query_count',
         'response_time',
         'response_code',
