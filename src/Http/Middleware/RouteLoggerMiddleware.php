@@ -77,6 +77,10 @@ class RouteLoggerMiddleware
                 // Set the IP address if the value is set to true
                 $data['ip'] = $request->ip();
             }
+            if (config('route-logger.track_user-agent')) {
+                // Set the user agent if the value is set to true
+                $data['user-agent'] = $_SERVER['HTTP_USER_AGENT'] ?? null;
+            }
             if (config('route-logger.track_user')) {
                 // Get the user id if the user is logged in
                 $userId = auth()->check() ? auth()->user()->id : null;
