@@ -58,9 +58,9 @@ class RouteLoggerMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
-     * @param  string|null              $guard
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     * @param string|null              $guard
      *
      * @return mixed
      */
@@ -71,6 +71,10 @@ class RouteLoggerMiddleware
 
         // Check whether or not we should log data
         if (config('route-logger.log_requests')) {
+            if ($request->getMethod() === 'OPTIONS') {
+                return $response;
+            }
+
             $data = [];
 
             if (config('route-logger.track_ip')) {
