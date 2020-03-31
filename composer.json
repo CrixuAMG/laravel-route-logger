@@ -3,7 +3,7 @@
   "description": "Automatically logs all requests with the request data",
   "require": {
     "php": ">=7.0",
-    "laravel/framework": "5.*"
+    "laravel/framework": "5.*||6.*||7.*"
   },
   "authors": [
     {
